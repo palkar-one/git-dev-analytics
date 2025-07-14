@@ -46,4 +46,55 @@ The system uses Git command-line parsing and JIRA REST API integration — with 
 ---
 
 ## 📂 Project Structure
+project-root/
+├── client/ # React frontend
+│ ├── src/
+│ │ ├── components/
+│ │ └── pages/
+│ └── public/
+├── server/ # Node.js backend
+│ ├── routes/
+│ ├── controllers/
+│ ├── services/ # Git & JIRA handlers
+│ └── models/
+├── .env
+├── package.json
+└── README.md
 
+---
+
+## ⚙️ Setup Instructions
+
+### Step 1: Clone the Repository
+
+```bash
+git clone https://github.com/your-username/your-project.git
+cd your-project
+
+### Step 2: Install Dependencies
+Backend
+cd server
+npm install
+
+Frontend
+cd ../client
+npm install
+
+### Step 3: Add Environment Variables
+Create a .env file in the /server folder with:
+GIT_REPO_PATH=/path/to/repo
+JIRA_HOST=https://your-domain.atlassian.net
+JIRA_EMAIL=your-email@example.com
+JIRA_API_TOKEN=your-token
+PORT=5000
+
+🚀 Running the App
+Start Backend
+
+cd server
+npm run dev
+
+Start Frontend
+cd client
+npm start
+Now open: http://localhost:3000
