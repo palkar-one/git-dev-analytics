@@ -46,6 +46,7 @@ The system uses Git command-line parsing and JIRA REST API integration — with 
 ---
 
 ## 📂 Project Structure
+
 project-root/
 ├── client/ # React frontend
 │ ├── src/
