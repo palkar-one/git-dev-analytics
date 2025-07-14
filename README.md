@@ -1,103 +1,58 @@
 # git-dev-analytics
-# 🚀 Developer Analytics Dashboard Using Git and JIRA
+# 🚀 Developer Analytics Dashboard Using Git
 
 ---
 
 ## 🧾 Project Overview
 
-The **Developer Analytics Dashboard Using Git and JIRA** is a full-stack web application that extracts, processes, and visualizes developer activity data from Git repositories and JIRA issue trackers. It enables engineering teams and individuals to gain insights into:
+The **Developer Analytics Dashboard** is a full-stack web application that extracts, processes, and visualizes developer activity data from Git repositories. It helps teams and individuals monitor developer productivity, working patterns, and code contribution trends using commit-level data.
 
-- Commit trends and productivity patterns  
-- Developer-specific contributions and timelines  
-- Task tracking via JIRA ticket IDs  
-- Working hours and behavior (late-night/weekend coding)  
-- File/module ownership within a project  
+By analyzing commit history, file changes, authorship, and timestamps, the system provides a user-friendly dashboard that reflects:
 
-The system uses Git command-line parsing and JIRA REST API integration — with no machine learning — to generate actionable insights. All metrics are visualized in an interactive React-based dashboard using libraries like Chart.js or Recharts. The backend is built with Node.js and Express, and data is stored in MongoDB or PostgreSQL.
+- Developer productivity and activity
+- Commit trends over time
+- Late-night or weekend work patterns
+- Code ownership and collaboration behavior
+- Contribution summaries across the team
+
+The system uses Git command-line parsing via Node.js on the backend and presents visual insights in a React-based frontend with clean and interactive UI components.
 
 ---
 
 ## 📊 Key Features
 
-- 📅 **Commit Trends**: Daily, weekly, monthly commit patterns  
-- 👤 **Developer Analytics**: Track per-user contributions  
-- 🕗 **Active Hours Visualization**: Identify late-night or weekend coding  
-- 📂 **Module Ownership**: Which dev owns which files/folders  
-- 🔗 **JIRA Integration**: Extract ticket info from commit messages  
-- 📈 **Real-Time Charts**: Visualize data with Chart.js or Recharts  
-- 🧾 **Ticket Timeline**: Show duration per JIRA task using commit timestamps  
-- 📥 **Export Reports**: Download team summaries as CSV/PDF  
+- 📅 **Commit Trends**: View daily, weekly, and monthly commit patterns  
+- 👤 **Developer Stats**: Track per-developer contribution and activity  
+- 🕗 **Working Hours Insight**: Detect late-night or weekend work habits  
+- 📂 **Code Ownership**: See who contributes most to which modules  
+- 📥 **Downloadable Reports**: Export summaries for team review  
 
 ---
 
 ## 🏗️ Tech Stack
 
 ### Backend (Node.js + Express)
-- `simple-git` for Git log parsing  
-- JIRA REST API integration  
-- REST APIs  
-- MongoDB / PostgreSQL  
+- Git log parsing using `simple-git`  
+- RESTful API for commit data  
+- MongoDB or PostgreSQL for data storage  
 
 ### Frontend (React)
-- Recharts / Chart.js  
-- Axios for API integration  
-- TailwindCSS or Bootstrap UI  
+- Axios for backend communication  
+- TailwindCSS or Bootstrap for UI components  
+- Custom-built charts and tables for visualization  
 
 ---
 
-## 📂 Project Structure
+## 📘 Future Enhancements
 
-project-root/
-├── client/               # React frontend
-│   ├── public/           # Static assets
-│   └── src/              # Source code
-│       ├── components/   # Reusable UI components
-│       ├── pages/        # Route-based pages
-│       └── App.js        # Main app entry point
-├── server/               # Node.js backend
-│   ├── controllers/      # Route handlers
-│   ├── routes/           # API routes
-│   ├── services/         # Git & JIRA service logic
-│   ├── models/           # DB schemas (if using MongoDB/Postgres)
-│   └── index.js          # Express app setup
-├── .env                  # Environment variables
-├── package.json          # Node.js dependencies
-├── README.md             # Project documentation
-└── .gitignore            # Git ignored files
+- Real-time commit tracking via WebSockets  
+- GitHub integration for pull request insights  
+- Role-based views for managers and contributors  
+- Notifications on abnormal activity patterns  
 
+---
 
-## ⚙️ Setup Instructions
+## ⚖️ License
 
-### Step 1: Clone the Repository
+This project is licensed under the **Apache License 2.0** – see the `LICENSE` file for details.
 
-```bash
-git clone https://github.com/your-username/your-project.git
-cd your-project
-
-### Step 2: Install Dependencies
-Backend
-cd server
-npm install
-
-Frontend
-cd ../client
-npm install
-
-### Step 3: Add Environment Variables
-Create a .env file in the /server folder with:
-GIT_REPO_PATH=/path/to/repo
-JIRA_HOST=https://your-domain.atlassian.net
-JIRA_EMAIL=your-email@example.com
-JIRA_API_TOKEN=your-token
-PORT=5000
-
-🚀 Running the App
-Start Backend
-
-cd server
-npm run dev
-
-Start Frontend
-cd client
-npm start
-Now open: http://localhost:3000
