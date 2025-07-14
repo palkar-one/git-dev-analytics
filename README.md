@@ -48,21 +48,23 @@ The system uses Git command-line parsing and JIRA REST API integration — with 
 ## 📂 Project Structure
 
 project-root/
-├── client/ # React frontend
-│ ├── src/
-│ │ ├── components/
-│ │ └── pages/
-│ └── public/
-├── server/ # Node.js backend
-│ ├── routes/
-│ ├── controllers/
-│ ├── services/ # Git & JIRA handlers
-│ └── models/
-├── .env
-├── package.json
-└── README.md
+├── client/               # React frontend
+│   ├── public/           # Static assets
+│   └── src/              # Source code
+│       ├── components/   # Reusable UI components
+│       ├── pages/        # Route-based pages
+│       └── App.js        # Main app entry point
+├── server/               # Node.js backend
+│   ├── controllers/      # Route handlers
+│   ├── routes/           # API routes
+│   ├── services/         # Git & JIRA service logic
+│   ├── models/           # DB schemas (if using MongoDB/Postgres)
+│   └── index.js          # Express app setup
+├── .env                  # Environment variables
+├── package.json          # Node.js dependencies
+├── README.md             # Project documentation
+└── .gitignore            # Git ignored files
 
----
 
 ## ⚙️ Setup Instructions
 
