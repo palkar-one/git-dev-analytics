@@ -1,29 +1,25 @@
 const simpleGit = require('simple-git');
 const fs = require('fs');
 const path = require('path');
+const { MongoClient } = require('mongodb');
+
+// MongoDB connection setup
+const mongoUri = 'mongodb://localhost:27017'; // 🔁 Change if using cloud Mongo
+const dbName = 'gitAnalytics';
+const collectionName = 'commits';
 
 const baseRepoPath = path.join(__dirname, '../cloned_repos');
-const outputBasePath = path.join(__dirname, '../metrics');
 
-// Ensure output folder exists
-if (!fs.existsSync(outputBasePath)) {
-  fs.mkdirSync(outputBasePath);
+async function connectToMongo() {
+  const client = new MongoClient(mongoUri);
+  await client.connect();
+  console.log('📡 Connected to MongoDB');
+  return client.db(dbName).collection(collectionName);
 }
 
-// Get all cloned repo folders
-const repoDirs = fs.readdirSync(baseRepoPath).filter(dir =>
-  fs.statSync(path.join(baseRepoPath, dir)).isDirectory()
-);
-
-if (repoDirs.length === 0) {
-  console.error('❌ No cloned repositories found in cloned_repos folder.');
-  process.exit(1);
-}
-
-async function getCommitMetrics(repoDir) {
+async function getCommitMetrics(repoDir, collection) {
   const repoPath = path.join(baseRepoPath, repoDir);
   const git = simpleGit(repoPath);
-  const outputPath = path.join(outputBasePath, `${repoDir}.json`);
 
   try {
     const rawLog = await git.raw([
@@ -40,7 +36,6 @@ async function getCommitMetrics(repoDir) {
       const [hash, parents, authorName, authorEmail, date] = line.split('|');
       const parentCommits = parents ? parents.split(' ').filter(p => p) : [];
 
-      // Get detailed file changes for each commit
       const detailed = await git.show([hash, '--stat', '--pretty=format:', '--name-only']);
       const linesSummary = detailed.split('\n').filter(line => line.includes('changed'));
 
@@ -60,6 +55,7 @@ async function getCommitMetrics(repoDir) {
         .filter(line => line.trim() && !line.includes('changed') && !line.includes('|'));
 
       commits.push({
+        repo: repoDir, // To identify which repo this belongs to
         commitId: hash,
         author: {
           name: authorName,
@@ -75,16 +71,31 @@ async function getCommitMetrics(repoDir) {
       });
     }
 
-    fs.writeFileSync(outputPath, JSON.stringify(commits, null, 2));
-    console.log(`✅ Metrics saved: ${outputPath}`);
+    if (commits.length > 0) {
+      await collection.insertMany(commits);
+      console.log(`✅ Inserted ${commits.length} commits from ${repoDir}`);
+    }
   } catch (err) {
     console.error(`❌ Error processing ${repoDir}:`, err.message);
   }
 }
 
-// Run for each repo
+// 🏁 Run All
 (async () => {
-  for (const repoDir of repoDirs) {
-    await getCommitMetrics(repoDir);
+  const repoDirs = fs.readdirSync(baseRepoPath).filter(dir =>
+    fs.statSync(path.join(baseRepoPath, dir)).isDirectory()
+  );
+
+  if (repoDirs.length === 0) {
+    console.error('❌ No cloned repositories found.');
+    return;
   }
+
+  const collection = await connectToMongo();
+
+  for (const repoDir of repoDirs) {
+    await getCommitMetrics(repoDir, collection);
+  }
+
+  process.exit(0);
 })();
