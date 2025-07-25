@@ -11,11 +11,25 @@ async function run() {
     const db = client.db('gitAnalytics');
     const collection = db.collection('commits');
 
-    const dataPath = path.join(__dirname, '../metrics/yourRepoName.json');
+    const metricsDir = path.join(__dirname, '../metrics');
+    const files = fs.readdirSync(metricsDir).filter(file => file.endsWith('.json'));
+
+    if (files.length === 0) {
+      console.warn('⚠️ No JSON files found in /metrics');
+      return;
+    }
+
+    const defaultFile = files[0]; // Pick the first JSON file
+    const dataPath = path.join(metricsDir, defaultFile);
     const commitData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
+    if (!Array.isArray(commitData)) {
+      console.warn(`⚠️ The file ${defaultFile} does not contain an array.`);
+      return;
+    }
+
     await collection.insertMany(commitData);
-    console.log('✅ Data inserted into MongoDB');
+    console.log(`✅ Data inserted from ${defaultFile} into MongoDB`);
   } catch (err) {
     console.error('❌ Failed:', err);
   } finally {
