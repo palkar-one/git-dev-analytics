@@ -19,17 +19,36 @@ async function run() {
       return;
     }
 
-    const defaultFile = files[0]; // Pick the first JSON file
-    const dataPath = path.join(metricsDir, defaultFile);
-    const commitData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+    // Clear existing data
+    await collection.deleteMany({});
+    console.log('🗑️ Cleared existing commit data');
 
-    if (!Array.isArray(commitData)) {
-      console.warn(`⚠️ The file ${defaultFile} does not contain an array.`);
-      return;
+    let totalInserted = 0;
+
+    // Process all JSON files
+    for (const file of files) {
+      const dataPath = path.join(metricsDir, file);
+      const commitData = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
+
+      if (!Array.isArray(commitData)) {
+        console.warn(`⚠️ The file ${file} does not contain an array.`);
+        continue;
+      }
+
+      // Add repository name to each commit
+      const repoName = path.basename(file, '.json');
+      const enrichedData = commitData.map(commit => ({
+        ...commit,
+        repository: repoName,
+        date: new Date(commit.date) // Ensure date is properly formatted
+      }));
+
+      await collection.insertMany(enrichedData);
+      totalInserted += enrichedData.length;
+      console.log(`✅ Inserted ${enrichedData.length} commits from ${file}`);
     }
 
-    await collection.insertMany(commitData);
-    console.log(`✅ Data inserted from ${defaultFile} into MongoDB`);
+    console.log(`🎉 Total commits inserted: ${totalInserted}`);
   } catch (err) {
     console.error('❌ Failed:', err);
   } finally {
